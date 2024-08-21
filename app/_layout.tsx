@@ -3,6 +3,12 @@ import { useFonts } from "expo-font";
 import * as SecureStore from "expo-secure-store";
 
 import { ClerkProvider, ClerkLoaded } from "@clerk/clerk-expo";
+import { Text, View } from "react-native";
+import Toast, {
+  BaseToast,
+  ErrorToast,
+  ToastConfigParams,
+} from "react-native-toast-message";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY as string;
 
@@ -39,6 +45,39 @@ export default function RootLayout() {
     "ibm-light": require("../assets/fonts/IBMPlexSansKR-Light.ttf"),
   });
 
+  const toastConfig = {
+    /*
+        Overwrite 'success' type,
+        by modifying the existing `BaseToast` component
+      */
+    success: (props: any) => <BaseToast {...props} />,
+    /*
+        Overwrite 'error' type,
+        by modifying the existing `ErrorToast` component
+      */
+    error: (props: any) => <ErrorToast {...props} />,
+
+    info: ({ text1, props }: ToastConfigParams<any>) => (
+      <View
+        style={{
+          height: 50,
+          width: "auto",
+          backgroundColor: "black",
+          paddingHorizontal: 20,
+          marginHorizontal: 20,
+          borderRadius: 50,
+          opacity: 0.7,
+          alignContent: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Text style={{ color: "white", fontWeight: "bold", fontSize: 16 }}>
+          {text1}
+        </Text>
+      </View>
+    ),
+  };
+
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
       <ClerkLoaded>
@@ -55,7 +94,15 @@ export default function RootLayout() {
               headerBackTitleVisible: false,
             }}
           />
+          <Stack.Screen
+            name="add"
+            options={{
+              title: "반려친구 등록하기",
+              headerBackTitleVisible: false,
+            }}
+          />
         </Stack>
+        <Toast config={toastConfig} />
       </ClerkLoaded>
     </ClerkProvider>
   );

@@ -4,7 +4,7 @@ import Colors from "@/constants/Colors";
 import { Pet } from "@/types";
 
 const PetAbout = ({ pet }: { pet: Pet }) => {
-  const [readMore, setReadMore] = useState(true);
+  const [readMore, setReadMore] = useState(Boolean(pet.about.length > 200));
   return (
     <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
       <Text style={{ fontFamily: "ibm-medium", fontSize: 20 }}>
