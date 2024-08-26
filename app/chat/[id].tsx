@@ -122,7 +122,9 @@ const ChatScreen = () => {
 
   return (
     <>
-      <Stack.Screen options={{ title: otherUser.name }} />
+      <Stack.Screen
+        options={{ title: otherUser.name, headerBackTitleVisible: false }}
+      />
       <ScrollView style={{ marginBottom: 80 }} ref={scrollRef}>
         {messages.map((message, index) => (
           <View key={message.id} style={{ marginVertical: 5 }}>
