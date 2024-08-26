@@ -105,6 +105,7 @@ const AddNewPetScreen = () => {
           type: "info",
           text1: `항목이 비었습니다`,
           position: "bottom",
+          visibilityTime: 2000,
         });
 
         return;

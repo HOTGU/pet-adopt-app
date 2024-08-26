@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import Shared from "@/Shared";
 import { useUser } from "@clerk/clerk-expo";
+import Toast from "react-native-toast-message";
 
 const MarkFav = ({
   petId,
@@ -35,16 +36,48 @@ const MarkFav = ({
 
   const addToFav = async () => {
     setIsLike(true);
-    const favorites = await getFav();
-    const addFavorites = [...favorites, petId];
-    await Shared.updateFav({ user, favorites: addFavorites });
+    try {
+      const favorites = await getFav();
+      const addFavorites = [...favorites, petId];
+      await Shared.updateFav({ user, favorites: addFavorites });
+      Toast.show({
+        type: "info",
+        text1: "찜하기 성공🎉",
+        position: "bottom",
+        visibilityTime: 1600,
+      });
+    } catch (error) {
+      Toast.show({
+        type: "info",
+        text1: "찜하기 오류❗️",
+        position: "bottom",
+        visibilityTime: 1600,
+      });
+    }
   };
 
   const removeToFav = async () => {
     setIsLike(false);
-    const favorites = await getFav();
-    const removeFavorites = favorites.filter((item: string) => item !== petId);
-    await Shared.updateFav({ user, favorites: removeFavorites });
+    try {
+      const favorites = await getFav();
+      const removeFavorites = favorites.filter(
+        (item: string) => item !== petId
+      );
+      await Shared.updateFav({ user, favorites: removeFavorites });
+      Toast.show({
+        type: "info",
+        text1: "찜해제 성공🎉",
+        position: "bottom",
+        visibilityTime: 1600,
+      });
+    } catch (error) {
+      Toast.show({
+        type: "info",
+        text1: "찜해제 오류❗️",
+        position: "bottom",
+        visibilityTime: 1600,
+      });
+    }
   };
 
   return (

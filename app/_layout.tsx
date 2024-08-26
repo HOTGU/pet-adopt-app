@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SecureStore from "expo-secure-store";
-
 import { ClerkProvider, ClerkLoaded } from "@clerk/clerk-expo";
 import { Text, View } from "react-native";
 import Toast, {
@@ -84,16 +83,6 @@ export default function RootLayout() {
         <Stack>
           <Stack.Screen name="index" />
           <Stack.Screen name="login" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-
-          <Stack.Screen
-            name="pet"
-            options={{
-              headerTransparent: true,
-              title: "",
-              headerBackTitleVisible: false,
-            }}
-          />
           <Stack.Screen
             name="add"
             options={{
@@ -101,6 +90,16 @@ export default function RootLayout() {
               headerBackTitleVisible: false,
             }}
           />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="pet/[id]"
+            options={{
+              headerTransparent: true,
+              headerBackTitleVisible: false,
+              title: "",
+            }}
+          />
+          <Stack.Screen name="chat/[id]" options={{ title: "" }} />
         </Stack>
         <Toast config={toastConfig} />
       </ClerkLoaded>

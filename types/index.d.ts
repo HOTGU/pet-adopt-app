@@ -18,6 +18,18 @@ export type Pet = {
   user: User;
 };
 
+export type ChatType = {
+  id: string;
+  users: User[];
+  userIds: string[];
+};
+
+export type MessageType = {
+  id: string;
+  text: string;
+  creator: User;
+  createdAt: number;
+};
 export type CategoryType = {
   id: string;
   name: CategoryList;

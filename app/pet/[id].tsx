@@ -6,8 +6,19 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useLocalSearchParams } from "expo-router";
-import { doc, getDoc } from "firebase/firestore";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  collection,
+  doc,
+  documentId,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import { useUser } from "@clerk/clerk-expo";
+
 import { db } from "@/config/firebaseConfig";
 import PetInfo from "@/components/petDetails/PetInfo";
 import PetSubInfo from "@/components/petDetails/PetSubInfo";
@@ -17,6 +28,8 @@ import { Pet } from "@/types";
 import Colors from "@/constants/Colors";
 
 const PetDetail = () => {
+  const { user } = useUser();
+  const router = useRouter();
   const { id }: { id: string } = useLocalSearchParams();
   const [pet, setPet] = useState<Pet | undefined>(undefined);
 
@@ -33,6 +46,42 @@ const PetDetail = () => {
     setPet(petData);
   };
 
+  const initateChat = async () => {
+    const currentUserEmail = user?.primaryEmailAddress?.emailAddress;
+    const currentUserName = user?.fullName;
+    const currentUserImagerUrl = user?.imageUrl;
+
+    const creatorEmail = pet?.user.email;
+    const creatorName = pet?.user?.name;
+    const creatorImageUrl = pet?.user?.imageUrl;
+
+    const docId1 = `${currentUserEmail}_${creatorEmail}`;
+    const docId2 = `${creatorEmail}_${currentUserEmail}`;
+
+    const docsRef = collection(db, "Chat");
+    const q = query(docsRef, where(documentId(), "in", [docId1, docId2]));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.docs.length === 0) {
+      const docRef = doc(db, "Chat", docId1);
+      await setDoc(docRef, {
+        users: [
+          {
+            email: currentUserEmail,
+            name: currentUserName,
+            imageUrl: currentUserImagerUrl,
+          },
+          { email: creatorEmail, name: creatorName, imageUrl: creatorImageUrl },
+        ],
+        userIds: [currentUserEmail, creatorEmail],
+      });
+      router.push(`/chat/${docId1}`);
+    } else {
+      const id = querySnapshot.docs[0].id;
+      router.push(`/chat/${id}`);
+    }
+  };
+
   if (!pet) return null;
 
   return (
@@ -45,7 +94,7 @@ const PetDetail = () => {
         <View style={{ height: 80 }} />
       </ScrollView>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={initateChat} style={styles.button}>
           <Text
             style={{
               textAlign: "center",
